@@ -64,5 +64,12 @@ describe("fsq", function () {
 
 			expect(promise).to.be.an.instanceOf(Q.makePromise);
 		});
+
+		it("should resolve when fs-writeFile is successful", function (done) {
+			// fakefs makes all commands successful by default.
+			promise = fsq.writeFile();
+
+			expect(promise).to.eventually.be.fulfilled.and.notify(done);
+		});
 	});
 });
