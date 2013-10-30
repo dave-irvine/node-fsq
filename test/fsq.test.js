@@ -16,11 +16,15 @@ chai.use(chaiAsPromised);
 var fsq = require("../fsq");
 
 describe("fsq", function () {
-	var fakefs = {
-		writeFile: function (filename, data, options, callback) {
-			callback();
-		}
-	};
+	var fakefs;
+
+	beforeEach(function () {
+		fakefs = {
+			writeFile: function (filename, data, options, callback) {
+				callback();
+			}
+		};
+	});
 
 	describe("Property: fs", function () {
 		it("should return undefined", function () {
