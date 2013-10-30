@@ -47,8 +47,42 @@ describe("fsq", function () {
 	});
 
 	describe("Property: handles", function () {
-		it("should return current amount of open file handles", function () {
+		beforeEach(function () {
+			fsq.fs = fakefs;
+		});
+
+		afterEach(function () {
+			fsq.fs = fs;
+		});
+
+		it("should return current amount of open file handles", function (done) {
+			var promise,
+				writeFileReady;
+
+			fakefs.writeFile = function (filename, data, options, callback) {
+				writeFileReady = callback;
+			};
+
+			// There should be no handles open
 			expect(fsq.handles).to.equal(0);
+
+			// Try to write a file, this will open a handle
+			promise = fsq.writeFile();
+
+			// Until writeFile() is complete in fakefs, we should have a handle open.
+			expect(fsq.handles).to.equal(1);
+
+			// Complete writeFile() in fakefs, which will resolve promise
+			writeFileReady();
+
+			promise.finally(
+				function () {
+					// Handles should be back to none
+					expect(fsq.handles).to.equal(0);
+
+					done();
+				}
+			);
 		});
 	});
 
