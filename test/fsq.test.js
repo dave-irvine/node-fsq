@@ -172,5 +172,41 @@ describe("fsq", function () {
 
 			expect(promise).to.eventually.be.fulfilled.and.notify(done);
 		});
+
+		it("should reject when fs-writeFile returns an error", function (done) {
+			var writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				callback(new Error());
+			});
+
+			promise = fsq.writeFile();
+
+			promise.finally(
+				function () {
+					writeFileStub.restore();
+				}
+			);
+
+			expect(promise).to.eventually.be.rejected.and.notify(done);
+		});
+
+		it("should reject when fs-writeFile throws an error", function (done) {
+			var writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				throw new Error();
+			});
+
+			promise = fsq.writeFile();
+
+			promise.finally(
+				function () {
+					writeFileStub.restore();
+				}
+			);
+
+			expect(promise).to.eventually.be.rejected.and.notify(done);
+		});
 	});
 });
