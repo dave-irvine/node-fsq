@@ -208,5 +208,31 @@ describe("fsq", function () {
 
 			expect(promise).to.eventually.be.rejected.and.notify(done);
 		});
+
+		it("should reduce handle count when successful", function (done) {
+			expect(fsq.handles).to.equal(0);
+
+			fsq.writeFile().finally(
+				function () {
+					expect(fsq.handles).to.equal(0);
+					done();
+				}
+			);
+		});
+
+		it("should reduce handle count when unsuccessful", function (done) {
+			fakefs.writeFile = function (filename, data, options, callback) {
+				throw new Error();
+			};
+
+			expect(fsq.handles).to.equal(0);
+
+			fsq.writeFile().finally(
+				function () {
+					expect(fsq.handles).to.equal(0);
+					done();
+				}
+			);
+		});
 	});
 });
