@@ -263,5 +263,54 @@ describe("fsq", function () {
 			writeFileReadyCallback();
 			cancellablePromise.cancel = true;
 		});
+
+		it("should call fs-writeFile after queueing if maxHandles is raised", function (done) {
+			var allFSWriteFilesCalled,
+				writeFileReadyCallbacks = [],
+				writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				writeFileReadyCallbacks.push(callback);
+				if (writeFileStub.callCount === 2) {
+					expect(fsq.maxHandles).to.equal(2);
+					allFSWriteFilesCalled();
+				}
+			});
+
+			allFSWriteFilesCalled = function () {
+				writeFileReadyCallbacks.forEach(function (callback) {
+					callback();
+				});
+			};
+
+			fsq.maxHandles = 1;
+
+			fsq.writeFile();
+
+			// The first writeFile() is queued, so we should have a handle open.
+			expect(fsq.handles).to.equal(1);
+
+			fsq.writeFile().finally(
+				function () {
+					// Handles have all been closed.
+					expect(fsq.handles).to.equal(0);
+					expect(writeFileStub).to.have.been.calledTwice;
+					done();
+				}
+			);
+
+			// Hit maxHandles, so the second fs-writeFile should not have been called.
+			expect(writeFileStub).to.have.been.calledOnce;
+
+			// Bump maxHandles
+			fsq.maxHandles = 2;
+			/*
+				Ideally we would now check how many times fs-writeFile has been called,
+				however because the dequeue is async, we can't tell when it will
+				call.
+
+				Put the expectation into the stub, but this seems nasty.
+			*/
+		});
 	});
 });
