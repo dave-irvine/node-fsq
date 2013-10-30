@@ -42,7 +42,11 @@ var fs = require("fs"),
 		(function deferredWrite() {
 			var unstack = function () {
 				setTimeout(function () {
-					deferredWrite();
+					if (!deferred.promise.cancel) {
+						deferredWrite();
+					} else {
+						deferred.reject();
+					}
 				});
 			};
 
