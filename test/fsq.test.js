@@ -1,6 +1,7 @@
 /* jshint node: true */
 /* global describe */
 /* global it */
+/* global beforeEach */
 "use strict";
 
 var chai = require("chai"),
@@ -17,7 +18,11 @@ chai.use(chaiAsPromised);
 var fsq = require("../fsq");
 
 describe("fsq", function () {
-	var fakefs;
+	var fakefs = {
+		writeFile: function (filename, data, options, callback) {
+			callback();
+		}
+	};
 
 	describe("Property: fs", function () {
 		it("should return undefined", function () {
@@ -25,15 +30,14 @@ describe("fsq", function () {
 		});
 
 		it("should allow injection of an object to replace internal 'fs' module", function () {
-			var writeFileSpy = sinon.spy();
-
-			fakefs = {
-				writeFile: writeFileSpy
-			};
+			var writeFileSpy = sinon.spy(fakefs, "writeFile");
 
 			fsq.fs = fakefs;
 			fsq.writeFile();
+
 			expect(writeFileSpy).to.have.been.calledOnce;
+
+			fsq.fs = fs;
 		});
 	});
 

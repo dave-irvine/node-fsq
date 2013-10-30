@@ -51,6 +51,7 @@ var fs = require("fs"),
 						}
 					});
 				} catch(err) {
+					queues.handles--;
 					console.log(err);
 					deferred.reject(err);
 				}
