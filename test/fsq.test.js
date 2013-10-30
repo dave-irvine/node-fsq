@@ -51,6 +51,14 @@ describe("fsq", function () {
 	describe("writeFile()", function () {
 		var promise;
 
+		beforeEach(function () {
+			fsq.fs = fakefs;
+		});
+
+		afterEach(function () {
+			fsq.fs = fs;
+		});
+
 		it("should return a Promise", function () {
 			promise = fsq.writeFile();
 
