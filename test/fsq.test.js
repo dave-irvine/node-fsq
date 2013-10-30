@@ -27,15 +27,18 @@ describe("fsq", function () {
 			expect(fsq.fs).to.equal(undefined);
 		});
 
-		it("should allow injection of an object to replace internal 'fs' module", function () {
+		it("should allow injection of an object to replace internal 'fs' module", function (done) {
 			var writeFileSpy = sinon.spy(fakefs, "writeFile");
 
 			fsq.fs = fakefs;
-			fsq.writeFile();
+			fsq.writeFile().finally(
+				function () {
+					expect(writeFileSpy).to.have.been.calledOnce;
 
-			expect(writeFileSpy).to.have.been.calledOnce;
-
-			fsq.fs = fs;
+					fsq.fs = fs;
+					done();
+				}
+			);
 		});
 	});
 
