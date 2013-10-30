@@ -1,7 +1,5 @@
 /* jshint node: true */
-/* global describe */
-/* global it */
-/* global beforeEach */
+/* global describe, it, beforeEach, afterEach */
 "use strict";
 
 var chai = require("chai"),
