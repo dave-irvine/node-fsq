@@ -1,7 +1,7 @@
 fsq
 ===
 
-*Node.js FS with Q.js*
+*Node.js FS with Q.js* [![Build Status](https://secure.travis-ci.org/dave-irvine/node-fsq.png)](http://travis-ci.org/dave-irvine/node-fsq)
 
 ####What?
 
