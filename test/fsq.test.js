@@ -84,6 +84,12 @@ describe("fsq", function () {
 				}
 			);
 		});
+
+		it("should not be able to be changed externally", function () {
+			expect(function () {
+				fsq.handles = 1;
+			}).to.throw(/which has only a getter/);
+		});
 	});
 
 	describe("writeFile()", function () {
