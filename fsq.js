@@ -23,6 +23,19 @@ var fs = require("fs"),
 		}
 	});
 
+	Object.defineProperty(fsq, "maxHandles", {
+		get: function () {
+			return queues.maxHandles;
+		},
+		set: function (val) {
+			if (typeof(val) !== "number" || isNaN(val) || !isFinite(val) || val < 1) {
+				throw new Error("Invalid value for maxHandles.");
+			} else {
+				queues.maxHandles = val;
+			}
+		}
+	});
+
 	fsq.writeFile = function (filename, data, options) {
 		var deferred = Q.defer();
 

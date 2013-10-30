@@ -92,6 +92,63 @@ describe("fsq", function () {
 		});
 	});
 
+	describe("Property: maxHandles", function () {
+		it("should return the current maximum amount of handles", function () {
+			expect(fsq.maxHandles).to.equal(Number.MAX_VALUE);
+		});
+
+		it("should be possible to change to a valid Number", function () {
+			fsq.maxHandles = 1;
+			expect(fsq.maxHandles).to.equal(1);
+		});
+
+		it("should throw an Error if trying to change to an invalid Number", function () {
+			expect(function () {
+				fsq.maxHandles = Infinity;
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = NaN;
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = Number.MAX_VALUE + 1;
+			});
+		});
+
+		it("should throw an Error if trying to change to a value less than 1", function () {
+			expect(function () {
+				fsq.maxHandles = 0;
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = -1;
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = Number.MIN_VALUE;
+			}).to.throw();
+		});
+
+		it("should throw an Error if trying to change to something other than a Number", function () {
+			expect(function () {
+				fsq.maxHandles = [];
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = {};
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = false;
+			}).to.throw();
+
+			expect(function () {
+				fsq.maxHandles = "";
+			}).to.throw();
+		});
+	});
+
 	describe("writeFile()", function () {
 		var promise;
 
