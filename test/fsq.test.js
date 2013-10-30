@@ -234,5 +234,34 @@ describe("fsq", function () {
 				}
 			);
 		});
+
+		it("should not call fs-writeFile once maxHandles has been reached", function (done) {
+			var cancellablePromise,
+				writeFileReadyCallback,
+				writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				writeFileReadyCallback = callback;
+			});
+
+			fsq.maxHandles = 1;
+
+			fsq.writeFile();
+			cancellablePromise = fsq.writeFile();
+
+			cancellablePromise.finally(
+				function () {
+					expect(writeFileStub).to.have.been.calledOnce;
+
+					writeFileStub.restore();
+					done();
+				}
+			);
+
+			expect(writeFileStub).to.have.been.calledOnce;
+
+			writeFileReadyCallback();
+			cancellablePromise.cancel = true;
+		});
 	});
 });
