@@ -17,4 +17,4 @@ Well yes, seeing as you asked. You can quite often run into the EMFILE error whe
 
 Since we are doing asynchronous IO anyway, it shouldn't really matter if we take a slightly more pragmatic approach and queue up our FS requests when we start hitting the EMFILE limit.
 
-(graceful-fs)[https://github.com/isaacs/node-graceful-fs] does this, but I think it only queues ```open()``` and ```readdir()```, and doesn't use Promises. I like Promises.
+[graceful-fs](https://github.com/isaacs/node-graceful-fs) does this, but I think it only queues ```open()``` and ```readdir()```, and doesn't use Promises. I like Promises.
