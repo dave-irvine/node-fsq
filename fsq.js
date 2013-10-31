@@ -58,8 +58,12 @@ var fs = require("fs"),
 						if (err) {
 							console.log(err);
 							if (err.code === "EMFILE") {
-								queues.maxHandles--;
-								unstack();
+								if (queues.handles < 1) {
+									deferred.reject();
+								} else {
+									queues.maxHandles = queues.handles;
+									unstack();
+								}
 							} else {
 								deferred.reject(err);
 							}

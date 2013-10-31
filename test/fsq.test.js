@@ -327,5 +327,38 @@ describe("fsq", function () {
 				Put the expectation into the stub, but this seems nasty.
 			*/
 		});
+
+		it("should adjust maxHandles once EMFILE is thrown by fs-writeFile", function (done) {
+			var writeFileReadyCallback,
+				writeFileReadyCallbacks = [],
+				writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				if (writeFileStub.callCount === 1) {
+					// Store the first writeFile call for later so that fsq.handles increases.
+					writeFileReadyCallback = callback;
+				} else if (writeFileStub.callCount === 2) {
+					// Throw an EMFILE error on the second writeFile call.
+					var error = new Error();
+					error.code = "EMFILE";
+					callback(error);
+				} else {
+					// The first writeFile call has resolved, so the 3rd call is the 2nd writeFile retrying.
+					callback();
+				}
+			});
+
+			fsq.maxHandles = 2;
+
+			fsq.writeFile();
+			fsq.writeFile().finally(
+				function () {
+					done();
+				}
+			);
+
+			expect(fsq.maxHandles).to.equal(1);
+			writeFileReadyCallback();
+		});
 	});
 });
