@@ -293,7 +293,6 @@ describe("fsq", function () {
 			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
 				writeFileReadyCallbacks.push(callback);
 				if (writeFileStub.callCount === 2) {
-					expect(fsq.maxHandles).to.equal(2);
 					allFSWriteFilesCalled();
 				}
 			});
@@ -307,14 +306,8 @@ describe("fsq", function () {
 			fsq.maxHandles = 1;
 
 			fsq.writeFile();
-
-			// The first writeFile() is queued, so we should have a handle open.
-			expect(fsq.handles).to.equal(1);
-
 			fsq.writeFile().finally(
 				function () {
-					// Handles have all been closed.
-					expect(fsq.handles).to.equal(0);
 					expect(writeFileStub).to.have.been.calledTwice;
 					done();
 				}
