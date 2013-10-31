@@ -221,9 +221,11 @@ describe("fsq", function () {
 		});
 
 		it("should reduce handle count when unsuccessful", function (done) {
-			fakefs.writeFile = function (filename, data, options, callback) {
+			var writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
 				throw new Error();
-			};
+			});
 
 			expect(fsq.handles).to.equal(0);
 
