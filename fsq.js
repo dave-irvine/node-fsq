@@ -57,7 +57,7 @@ var fs = require("fs"),
 				returnedArgs = Array.prototype.slice.call(arguments);
 
 			err = returnedArgs[0];
-			returnedArgs.unshift();
+			returnedArgs.shift();
 
 			queues.handles--;
 
