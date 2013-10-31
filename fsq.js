@@ -113,5 +113,9 @@ var fs = require("fs"),
 		return nodeCaller("writeFile", argsParser([filename, data], options));
 	};
 
+	fsq.readFile = function (filename, options) {
+		return nodeCaller("readFile", argsParser([filename], options));
+	};
+
 	module.exports = fsq;
 }());
