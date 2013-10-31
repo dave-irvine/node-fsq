@@ -207,7 +207,6 @@ describe("fsq", function () {
 
 		it("should adjust maxHandles once EMFILE is thrown by fs-writeFile", function (done) {
 			var writeFileReadyCallback,
-				writeFileReadyCallbacks = [],
 				writeFileStub;
 
 			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
