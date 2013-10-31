@@ -237,6 +237,25 @@ describe("fsq", function () {
 			);
 		});
 
+		it("should increase handle count when fs-writeFile is called", function (done) {
+			var writeFileReadyCallback,
+				writeFileStub;
+
+			writeFileStub = sinon.stub(fakefs, "writeFile", function (filename, data, options, callback) {
+				writeFileReadyCallback = callback;
+			});
+
+			fsq.writeFile().finally(
+				function () {
+					done();
+				}
+			);
+
+			expect(fsq.handles).to.equal(1);
+
+			writeFileReadyCallback();
+		});
+
 		it("should not call fs-writeFile once maxHandles has been reached", function (done) {
 			var cancellablePromise,
 				writeFileReadyCallback,
