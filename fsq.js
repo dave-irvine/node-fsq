@@ -5,11 +5,13 @@ var fs = require("fs"),
 	Q = require("q");
 
 (function () {
-	var fsq = {};
-	var queues = {
-		handles: 0,
-		maxHandles: Number.MAX_VALUE
-	};
+	var argsParser,
+		fsq = {},
+		nodeCaller,
+		queues = {
+			handles: 0,
+			maxHandles: Number.MAX_VALUE
+		};
 
 	Object.defineProperty(fsq, "handles", {
 		get: function () {
@@ -36,52 +38,79 @@ var fs = require("fs"),
 		}
 	});
 
-	fsq.writeFile = function (filename, data, options) {
-		var deferred = Q.defer();
+	argsParser = function (args, options) {
+		if (typeof(options) !== "function") {
+			args.push(options);
+		}
 
-		(function deferredWrite() {
-			var unstack = function () {
-				setTimeout(function () {
-					if (!deferred.promise.cancel) {
-						deferredWrite();
+		return args;
+	};
+
+	nodeCaller = function (func, args) {
+		var callback,
+			deferred = Q.defer(),
+			deferredCall,
+			unstack;
+
+		callback = function (/* err, ... */) {
+			var err,
+				returnedArgs = Array.prototype.slice.call(arguments);
+
+			err = returnedArgs[0];
+			returnedArgs.unshift();
+
+			queues.handles--;
+
+			if (err) {
+				if (err.code === "EMFILE") {
+					if (queues.handles < 1) {
+						deferred.reject(new Error("FSQ: Encounted max file handles from FS module with only 1 handle."));
 					} else {
-						deferred.reject();
+						queues.maxHandles = queues.handles;
+						unstack(deferredCall, deferred);
 					}
-				});
-			};
-
-			if (queues.handles < queues.maxHandles) {
-				try {
-					queues.handles++;
-					fs.writeFile(filename, data, options, function (err) {
-						queues.handles--;
-						if (err) {
-							console.log(err);
-							if (err.code === "EMFILE") {
-								if (queues.handles < 1) {
-									deferred.reject();
-								} else {
-									queues.maxHandles = queues.handles;
-									unstack();
-								}
-							} else {
-								deferred.reject(err);
-							}
-						} else {
-							deferred.resolve();
-						}
-					});
-				} catch(err) {
-					queues.handles--;
-					console.log(err);
+				} else {
 					deferred.reject(err);
 				}
 			} else {
-				unstack();
+				deferred.resolve(returnedArgs);
 			}
-		}());
+		};
+
+		deferredCall = function() {
+			if (queues.handles < queues.maxHandles) {
+				try {
+					queues.handles++;
+
+					args.push(callback);
+
+					fs[func].apply(undefined, args);
+				} catch (err) {
+					queues.handles--;
+					deferred.reject(err);
+				}
+			} else {
+				unstack(deferredCall, deferred);
+			}
+		};
+
+		unstack = function () {
+			setTimeout(function () {
+				if (!deferred.promise.cancel) {
+					deferredCall();
+				} else {
+					deferred.reject("FSQ: Promise was cancelled.");
+				}
+			});
+		};
+
+		deferredCall();
 
 		return deferred.promise;
+	};
+
+	fsq.writeFile = function (filename, data, options) {
+		return nodeCaller("writeFile", argsParser([filename, data], options));
 	};
 
 	module.exports = fsq;
