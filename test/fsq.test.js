@@ -158,6 +158,7 @@ describe("fsq", function () {
 
 		afterEach(function () {
 			fsq.fs = fs;
+			fsq.maxHandles = Number.MAX_VALUE;
 		});
 
 		it("should return a Promise", function () {
