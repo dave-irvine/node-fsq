@@ -1,7 +1,17 @@
-fsq
+fsq [![Build Status](https://secure.travis-ci.org/dave-irvine/node-fsq.png)](http://travis-ci.org/dave-irvine/node-fsq) [![NPM version](https://badge.fury.io/js/fsq.png)](http://badge.fury.io/js/fsq)
 ===
 
-*Node.js FS with Q.js* [![Build Status](https://secure.travis-ci.org/dave-irvine/node-fsq.png)](http://travis-ci.org/dave-irvine/node-fsq)
+*Node.js FS with Q.js*
+
+Installation
+============
+
+```
+npm install fsq
+```
+
+Discussion
+==========
 
 ####What?
 
