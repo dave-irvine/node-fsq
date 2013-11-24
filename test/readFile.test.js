@@ -6,6 +6,7 @@ var chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
 	expect = chai.expect,
 	fs = require("fs"),
+	should = require("chai").should(),
 	sinon = require("sinon"),
 	sinonChai = require("sinon-chai"),
 	Q = require("q");
@@ -205,7 +206,12 @@ describe("fsq", function () {
 
 			promise = fsq.readFile();
 
-			expect(promise).to.eventually.deep.equal(expectedDataParameter).and.notify(done);
+			promise.then(
+				function (data) {
+					readFileStub.restore();
+					expect(data).to.deep.equal(expectedDataParameter);
+				}
+			).should.notify(done);
 		});
 	});
 });
