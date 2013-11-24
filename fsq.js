@@ -5,8 +5,7 @@ var fs = require("fs"),
 	Q = require("q");
 
 (function () {
-	var argsParser,
-		fsq = {},
+	var fsq = {},
 		nodeCaller,
 		queues = {
 			handles: 0,
@@ -37,14 +36,6 @@ var fs = require("fs"),
 			}
 		}
 	});
-
-	argsParser = function (args, options) {
-		if (typeof(options) !== "function") {
-			args.push(options);
-		}
-
-		return args;
-	};
 
 	nodeCaller = function (func, args) {
 		var callback,
@@ -110,11 +101,22 @@ var fs = require("fs"),
 	};
 
 	fsq.writeFile = function (filename, data, options) {
-		return nodeCaller("writeFile", argsParser([filename, data], options));
+		var args = [filename, data];
+		if (typeof(options) !== "function") {
+			args.push(options);
+		}
+
+		return nodeCaller("writeFile", args);
 	};
 
 	fsq.readFile = function (filename, options) {
-		return nodeCaller("readFile", argsParser([filename], options));
+		var args = [filename];
+		if (typeof(options) !== "function") {
+			args.push(options);
+		}
+
+		return nodeCaller("readFile", args);
+	};
 	};
 
 	module.exports = fsq;
