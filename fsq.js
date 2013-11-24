@@ -50,6 +50,15 @@ var fs = require("fs"),
 			err = returnedArgs[0];
 			returnedArgs.shift();
 
+			// For some reason, some node callbacks don't follow the convention of taking an 'err' parameter first.
+			if (func === "exists" && err !== undefined) {
+				// Shouldn't happen other than in our test suite.
+				if (err.constructor !== Error) {
+					returnedArgs.push(err);
+					err = undefined;
+				}
+			}
+
 			queues.handles--;
 
 			if (err) {
@@ -117,6 +126,10 @@ var fs = require("fs"),
 
 		return nodeCaller("readFile", args);
 	};
+
+	fsq.exists = function (path) {
+		var args = [path];
+		return nodeCaller("exists", args);
 	};
 
 	module.exports = fsq;
