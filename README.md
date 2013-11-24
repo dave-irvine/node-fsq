@@ -55,6 +55,14 @@ Promise resolves with ```Object```:
 
 * exists (```Boolean```)
 
+#####fsq.readdir(path)
+See [fs.readdir](http://nodejs.org/api/fs.html#fs_fs_readdir_path_callback) for parameter details.
+
+Promise resolves with ```Object```:
+
+* files (```Array```)
+
+
 Examples
 --------
 
