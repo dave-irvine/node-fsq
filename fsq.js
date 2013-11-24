@@ -141,5 +141,10 @@ var fs = require("fs"),
 		return nodeCaller("exists", args, ["exists"]);
 	};
 
+	fsq.readdir = function (path) {
+		var args = [path];
+		return nodeCaller("readdir", args, ["files"]);
+	};
+
 	module.exports = fsq;
 }());
