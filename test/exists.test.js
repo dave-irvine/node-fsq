@@ -200,11 +200,11 @@ describe("fsq", function () {
 		});
 
 		it("should resolve with the 'exists' parameter returned from fs-exists", function (done) {
-			var expectedExistsParameter = [true],
+			var expectedExistsParameter = { "exists": true },
 				existsStub;
 
 			existsStub = sinon.stub(fakefs, "exists", function (path, callback) {
-				callback(expectedExistsParameter[0]);
+				callback(expectedExistsParameter.exists);
 			});
 
 			promise = fsq.exists();

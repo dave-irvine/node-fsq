@@ -39,7 +39,7 @@ The exceptions here are that the ```callback``` parameter should not be passed (
 #####fsq.readFile(filename, [options])
 See [fs.readFile](http://nodejs.org/docs/v0.10.21/api/fs.html#fs_fs_readfile_filename_options_callback) for parameter details.
 
-Promise resolves with ```Array```:
+Promise resolves with ```Object```:
 
 * data (```String``` if encoding is specified in options, otherwise ```Buffer```)
 
@@ -51,7 +51,7 @@ Promise resolves with ```undefined```.
 #####fsq.exists(path)
 See [fs.exists](http://nodejs.org/api/fs.html#fs_fs_exists_path_callback) for parameter details.
 
-Promise resolves with ```Array```:
+Promise resolves with ```Object```:
 
 * exists (```Boolean```)
 

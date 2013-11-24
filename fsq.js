@@ -37,7 +37,7 @@ var fs = require("fs"),
 		}
 	});
 
-	nodeCaller = function (func, args) {
+	nodeCaller = function (func, args, callbackParameterNames) {
 		var callback,
 			deferred = Q.defer(),
 			deferredCall,
@@ -45,7 +45,8 @@ var fs = require("fs"),
 
 		callback = function (/* err, ... */) {
 			var err,
-				returnedArgs = Array.prototype.slice.call(arguments);
+				returnedArgs = Array.prototype.slice.call(arguments),
+				returnParameterMap = {};
 
 			err = returnedArgs[0];
 			returnedArgs.shift();
@@ -73,7 +74,15 @@ var fs = require("fs"),
 					deferred.reject(err);
 				}
 			} else {
-				deferred.resolve(returnedArgs);
+				if (callbackParameterNames !== undefined) {
+					callbackParameterNames.forEach(function (callbackParameterName, index) {
+						returnParameterMap[callbackParameterName] = returnedArgs[index];
+					});
+				} else {
+					returnParameterMap = undefined;
+				}
+
+				deferred.resolve(returnParameterMap);
 			}
 		};
 
@@ -124,12 +133,12 @@ var fs = require("fs"),
 			args.push(options);
 		}
 
-		return nodeCaller("readFile", args);
+		return nodeCaller("readFile", args, ["data"]);
 	};
 
 	fsq.exists = function (path) {
 		var args = [path];
-		return nodeCaller("exists", args);
+		return nodeCaller("exists", args, ["exists"]);
 	};
 
 	module.exports = fsq;

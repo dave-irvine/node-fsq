@@ -197,11 +197,11 @@ describe("fsq", function () {
 		});
 
 		it("should resolve with the 'data' parameter returned from fs-readFile", function (done) {
-			var expectedDataParameter = ["test"],
+			var expectedDataParameter = { "data": "test" },
 				readFileStub;
 
 			readFileStub = sinon.stub(fakefs, "readFile", function (filename, options, callback) {
-				callback(null, expectedDataParameter[0]);
+				callback(null, expectedDataParameter.data);
 			});
 
 			promise = fsq.readFile();
