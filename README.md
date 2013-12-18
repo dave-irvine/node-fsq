@@ -80,3 +80,7 @@ fsq.writeFile("world.json", "Hello").then(
 	}
 );
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dave-irvine/node-fsq/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
