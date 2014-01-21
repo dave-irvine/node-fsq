@@ -146,5 +146,26 @@ var fs = require("fs"),
 		return nodeCaller("readdir", args, ["files"]);
 	};
 
+	fsq.mkdir = function (path, mode) {
+		var args = [path];
+		if (mode !== undefined) {
+			args.push(mode);
+		}
+
+		return nodeCaller("mkdir", args);
+	};
+
+	fsq.rmdir = function (path) {
+		var args = [path];
+
+		return nodeCaller("rmdir", args);
+	};
+
+	fsq.unlink = function (path) {
+		var args = [path];
+
+		return nodeCaller("unlink", args);
+	};
+
 	module.exports = fsq;
 }());
